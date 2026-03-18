@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Surat online</title>
+<style>
+* {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden; /* matiin scroll horizontal & vertical */
+}
+  
+  
+
+
+html,body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #0D1B3D, #000428);
+  font-family: sans-serif;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* login page */
+#loginPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #111111, #3a3a3a);
+}
+#loginPage h2 { color:white; }
+#passwordInput { padding:10px; border-radius:8px; border:none; }
+#loginBtn { padding:10px 20px; border:none; background:#ff4477; color:white; border-radius:8px; margin-top:20px; }
+#loginMsg { color:white; font-weight:bold; margin-top:10px; }
+
+/* main page */
+#mainPage { display:none; }
+
+
+#amplop { max-width:300px; 
+width:100%; 
+cursor:pointer;
+animation:goyang 1s infinite;
+margin-bottom:10px; }
+
+@keyframes goyang{0%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}100%{transform:rotate(-5deg);}}
+
+#suratGambar{width:300px; 
+            cursor:pointer; 
+            display:none; 
+            margin-bottom:10px;}
+  
+@keyframes keluarSurat {
+  0%{
+    transform: translateX(-50%) translateY(40px) rotate(-50deg);
+    opacity:0;
+  }
+  60%{
+    transform: translateX(-50%) translateY(-10px) rotate(25deg);
+    opacity:1;
+  }
+  100%{
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    opacity:1;
+  }
+}
+            
+#teksSurat{font-weight:bold; 
+          font-size:30px;         
+          color:white;
+          text-shadow:0 0 5px #ff2bd6,0 0 8px #ff2bd6,0 0 18px #ff2bd6;
+           display:block; 
+           position:absolute; 
+           left:50%; 
+           transform:translateX(-50%); top:27%; opacity:1; 
+           text-align:center;}
+#btn{font-size:20px;
+border:none; 
+background:#ff4477;
+font-style:italic;
+position:absolute; 
+left:50%; 
+transform:translateX(-50%);
+bottom:30%; 
+color:white; 
+border-radius:12px;
+width:120px;
+height: 35px;
+}
+
+/* love animasi */
+.love { position:absolute; color:#ff4477; font-size:35px; opacity:0.8; pointer-events:none; animation:grow 3s linear forwards; }
+@keyframes grow{0%{transform:scale(0);opacity:0.8;}50%{transform:scale(1.5);opacity:0.5;}100%{transform:scale(2);opacity:0;}}
+
+/* game page */
+#gamePage { display:none; 
+flex-direction:column; 
+align-items:center;
+justify-content:center; 
+gap:20px; width:100%;
+height:100vh; }
+
+#pertanyaan{
+ color:white;
+font-size:24px; 
+text-align:center;
+margin-bottom:10px;}
+
+#pilihan{
+  display:flex; 
+  flex-direction:column;
+  gap:15px; 
+  width:80%; 
+  max-width:250px;
+  margin:0 auto;}
+  
+#pilihan button{
+background:#ff4477;
+
+color:white;
+border:none;
+padding:12px; 
+border-radius:12px; 
+font-size:16px; 
+cursor:pointer; 
+
+transition:0.2s;}
+#pilihan button:active{
+  transform:scale(0.95); 
+  box-shadow:0 0 5px white;
+  
+}
+#hasil{color:white;
+margin-top:20px;
+font-weight:bold;
+font-size:18px;}
+
+#spinnerContainer {
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  border:5px solid #ff4477;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  overflow:hidden;
+  display:none;
+  text-align:center;
+}
+
+#spinnerContainer h2 {
+  color:white;
+  text-align:center;
+  margin-bottom:20px;
+  font-size:22px;
+}
+
+#spinner {
+  width:100%;
+  height:100%;
+  position:absolute;
+  transform:rotate(0deg);
+  transition: transform 4s cubic-bezier(0.25,1,0.5,1);
+}
+.item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform-origin: 50% 50%;
+  clip-path: polygon(50% 50%, 100% 0%, 100% 100%);
+}
+
+.item .text {
+  position: absolute;         /* penting biar bisa dikontrol */
+  top: 50%;                   /* titik tengah slice vertikal */
+  left: 85%;                  /* kira-kira titik tengah “panjang” slice */
+  transform: translate(-50%, -50%) rotate(90deg); /* center dan vertikal */
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  width: 80px;
+}
+
+#pointer {
+  width:0;
+  height:0;
+  border-left:15px solid transparent;
+  border-right:15px solid transparent;
+  border-top:25px solid white; /* ngadep ke bawah */
+  position:absolute;
+  top:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+}
+
+#spinBtn {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  border:none;
+  background:black;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:20;
+}
+
+#spinnerResult{
+  
+  font-size:18px;
+  color:white;
+  font-weight:bold;
+position: absolute;
+  top: 15vh; /* sedikit di bawah lingkaran 300px */
+  left: 50%;
+  transform: translateX(-50%);
+}
+  
+/* tombol untuk masuk ke countdown */
+#countdownBtn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  border-radius: 12px;
+  border: none;
+  background: #ff4477;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+position: absolute;
+  top: calc(50% + 180px); /* sesuaikan jarak bawah spinner */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* countdown container */
+#countdownContainer {
+  display: none; /* awalnya sembunyi */
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white; /* teks putih */
+  padding: 20px 30px; 
+
+  
+}
+
+/* teks di atas countdown */
+#countdownTitle {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+/* hitung mundur horizontal */
+#countdownTimer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+#countdownTimer div {
+  background: rgba(255,255,255,0.1);
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+  
+#countdownTimer {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* jarak antar kotak */
+  margin-top: 15px;
+}
+
+#countdownTimer div {
+  background-color: white; /* background putih */
+  border: 2px solid black; /* border hitam */
+  border-radius: 8px;
+  padding: 15px 20px;
+  min-width: 40px;
+  text-align: center;
+  color: black; /* teks hitam */
+  font-weight: bold;
+  font-size: 20px;
+  display: flex;
+  
+  align-items: center;
+}
+
+#countdownTimer div span {
+  font-size: 20px;
+  font-weight: bold;
+  color: black; /* angka tetap hitam */
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div id="loginPage">
+  <h2>Masukkin Password dulu yaa cantikk 💌</h2>
+  <input type="password" id="passwordInput" placeholder="password...">
+  <button id="loginBtn">Masuk</button>
+  <p id="loginMsg"></p>
+</div>
+
+<div id="mainPage">
+  <img id="amplop" src="amplop1.png" alt="Amplop Tertutup">  
+  <img id="suratGambar" src="amplop2.png" alt="Surat">  
+  <p id="teksSurat"></p>  
+  <button id="btn">Klik Aku!!</button>
+</div>
+
+<div id="gamePage">
+  <h2 id="pertanyaan"></h2>
+  <div id="pilihan"></div>
+  <p id="hasil"></p>
+</div>
+
+  
+<div id="spinnerContainer" style="display:none;">
+
+  <div id="pointer"></div>
+  <div id="spinner">
+    <div class="item" style="background:#ff0000; transform:rotate(0deg)">
+      <span class="text">Kirim foto random lucu keabang</span>
+    </div>
+    <div class="item" style="background:#800080; transform:rotate(72deg)">
+      <span class="text">Sebulan ga dapet jajan 😅</span>
+    </div>
+    <div class="item" style="background:#008000; transform:rotate(144deg)">
+      <span class="text">Dapat snack favorit 🍫</span>
+    </div>
+    <div class="item" style="background:orange; transform:rotate(216deg)">
+      <span class="text">Harus nyanyi 1 lagu 🎤</span>
+    </div>
+    <div class="item" style="background:#ff2bd6; transform:rotate(288deg)">
+      <span class="text">kirim pap & dapet uang jajan dari abang</span>
+    </div>
+  </div>
+  <button id="spinBtn">PUTAR</button>
+</div>
+
+<p id="spinnerResult"></p>
+
+<!-- tombol untuk masuk ke countdown -->
+<button id="countdownBtn">Cek ada sesuatu</button>
+
+<!-- container countdown -->
+<div id="countdownContainer">
+  <p id="countdownTitle">Hitung mundur rahasia… hayoo bisa tebak ga ini apa hehehe😄</p>
+  <div id="countdownTimer">
+    <div><span id="days">00</span>d</div>
+    <div><span id="hours">00</span>h</div>
+    <div><span id="minutes">00</span>m</div>
+    <div><span id="seconds">00</span>s</div>
+  </div>
+</div>
+
+
+
+<script>
+
+const passwordBenar = "sitii tarigan";
+
+let loginBtn = document.getElementById("loginBtn");
+let input = document.getElementById("passwordInput");
+let loginPage = document.getElementById("loginPage");
+let mainPage = document.getElementById("mainPage");
+let msg = document.getElementById("loginMsg");
+
+loginBtn.addEventListener("click", () => {
+
+if(input.value === passwordBenar){
+  
+msg.textContent = " Yeayyy password benar 🥳🥳";
+msg.style.color = "lightgreen";
+
+setTimeout(()=>{
+loginPage.style.display = "none";
+mainPage.style.display = "flex";
+},1000);
+}else{
+msg.textContent = "no,no,no password salah🙂‍↔";
+msg.style.color = "#ff4477";
+setTimeout(()=>{
+msg.textContent = "";
+},2000);
+}
+
+});
+
+
+
+
+let tombol = document.getElementById("btn");  
+let amplop = document.getElementById("amplop");  
+let suratGambar = document.getElementById("suratGambar");  
+let teksSurat = document.getElementById("teksSurat");  
+  
+// klik tombol → muncul surat & teks awal, langsung setTimeout 2 detik untuk GIF & teks panjang  
+tombol.addEventListener("click", () => {  
+  // tampilkan surat & teks awal  
+  amplop.style.animation = "none"; // stop goyang  
+  suratGambar.style.display = "block";  
+  teksSurat.style.display = "block";  
+  teksSurat.textContent = "Allo Sitii🫣🫶";  
+ teksSurat.style.animation ="keluarSurat 1s ease forwards";
+  
+  
+  
+  amplop.style.display = "none";  
+  tombol.style.display = "none";
+  
+  // delay 2 detik → sembunyikan surat, tampil GIF & teks panjang  
+  setTimeout(() => {  
+    suratGambar.style.display = "none";  
+    teksSurat.style.display = "none";  
+  
+    // munculkan GIF  
+    let gif = document.createElement("img");  
+    gif.src = "g.gif"; 
+    gif.classList.add("temp");
+    gif.style.position = "absolute";  
+    gif.style.width = "170px";  
+    gif.style.left = "50%";  
+    gif.style.top = "20%";  
+    gif.style.transform = "translateX(-50%)";  
+    document.body.appendChild(gif);  
+  
+    // container teks panjang  
+    let kontenTeks = document.createElement("div");  
+   kontenTeks.classList.add("temp");
+    kontenTeks.style.width = "80%";  
+    kontenTeks.style.maxWidth = "300px";  
+    kontenTeks.style.fontSize = "18px";  
+    kontenTeks.style.lineHeight = "1.5";  
+    kontenTeks.style.position = "absolute";  
+    kontenTeks.style.top = "40%";  
+    kontenTeks.style.left = "50%";  
+    kontenTeks.style.transform = "translateX(-50%)";  
+    kontenTeks.style.textAlign = "left";  
+    kontenTeks.style.background ="rgba(0,0,0,0.2)";;  
+    kontenTeks.style.padding = "10px";  
+    kontenTeks.style.borderRadius = "10px";  
+    kontenTeks.style.maxHeight = "200px";  
+    kontenTeks.style.overflowY = "auto";  
+    kontenTeks.style.color = "white"  
+    kontenTeks.style.fontWeight = "bold"  
+   kontenTeks.style.border = "2px solid white";  
+   kontenTeks.style.boxSizing = "border-box";
+    document.body.appendChild(kontenTeks);  
+  
+    // teks panjang muncul kata per kata  
+    let panjangTeks = "Haii adekk💖 tetap semangat yaa! walaupun kadang ada aja masalah yang datang, abang selalu ada disini buat dengerin adekk, nemenin adekk, meskipun cuma dari jauh abang ngerti kadang suasana dirumah bikin adekk capek intinya mangatt terus yaa abang mungkin belom bisa bantu banyak tapi abang bakalan selalu ada buat adek, kapanpun adekk butuh🫶 Every day I'm so proud of you Aku selalu jatuh cinta lagi dan lagi, dan ngobrol sama adekk tuh bikin abang seneng banget. Walaupun ga tiap hari rasanya bahagia tapi selama masi ada kamu, semuanya terasa lebih baik. Jadi kalo ada apa-apa cerita aja ke abang yaa, Jangan dipendem sendiri🫠.jangan ragu sama abang ya,sama abang terus yaa TERAKHIR ABANGG SAYANGG BANGETT SAMA SITII💐";  
+    let kata = panjangTeks.split(" ");  
+    let i = 0;  
+    function tulisKata() {  
+      if (i < kata.length) {  
+        kontenTeks.innerHTML += kata[i] + " ";  
+        i++;  
+        setTimeout(tulisKata, 50);  
+        kontenTeks.scrollTop = kontenTeks.scrollHeight;  
+      }
+    else{
+    gameBtn.style.display = "block";
+}
+     
+    }  
+    tulisKata();  
+  }, 2500);  
+});  
+  
+// animasi love tetap jalan  
+function createLove() {  
+  const love = document.createElement("div");  
+  love.classList.add("love");  
+  love.textContent = "☄️       🩷";   
+  
+  const x = Math.random() * window.innerWidth;  
+  const y = Math.random() * window.innerHeight;  
+  love.style.left = x + "px";  
+  love.style.top = y + "px";  
+  
+  document.body.appendChild(love);  
+  
+  setTimeout(() => {  
+    love.remove();  
+  }, 3000);  
+}  
+setInterval(createLove, 500); 
+
+let gameBtn = document.createElement("button");
+gameBtn.textContent = "Lanjut Main Game yukk";
+gameBtn.style.position = "absolute";
+gameBtn.style.bottom = "20%";
+gameBtn.style.left = "50%";
+gameBtn.style.transform = "translateX(-50%)";
+gameBtn.style.padding = "10px 20px";
+gameBtn.style.border = "none";
+gameBtn.style.borderRadius = "10px";
+gameBtn.style.background = "#ff4477";
+gameBtn.style.color = "white";
+gameBtn.style.fontSize = "13px";
+gameBtn.style.display = "none";
+
+document.body.appendChild(gameBtn);
+
+gameBtn.addEventListener("click", ()=>{
+
+document.getElementById("mainPage").style.display = "none";
+document.getElementById("gamePage").style.display = "block";
+
+/* hapus semua elemen lama */
+document.querySelectorAll(".temp").forEach(el=>{
+  el.remove();
+});
+
+gameBtn.style.display = "none";
+
+tampilPertanyaan();
+
+});
+
+let pertanyaan = document.getElementById("pertanyaan");
+let pilihan = document.getElementById("pilihan");
+let hasil = document.getElementById("hasil");
+
+let step = 1;
+
+function tampilPertanyaan() {
+  pilihan.innerHTML = "";
+  hasil.textContent = "";
+const existingGif = document.getElementById("gifSalah");
+  if(existingGif) existingGif.remove();
+
+  if(step === 1){
+    pertanyaan.textContent = "Siapa yang paling sayang sama sitii? 🫣";
+
+    let opsi = ["semua orang","sahabat deket","teman","abang"];
+
+    opsi.forEach(teks=>{
+      let btn = document.createElement("button");
+      btn.textContent = teks;
+
+      btn.onclick = ()=>{
+const existingGif = document.getElementById("gifSalah");
+        if(existingGif) existingGif.remove();
+
+        if(teks === "abang"){
+          hasil.textContent = "Makasii adekk 🫶";
+      const gif = document.createElement("img");
+    gif.src = "x.gif"; // ganti sesuai GIF kamu
+    gif.id = "gifSalah"; // tetep pake id sama biar bisa dihapus
+    gif.style.width = "150px";
+    gif.style.height = "150px";
+    gif.style.borderRadius = "50%";
+    gif.style.marginTop = "10px";
+    gif.style.display = "block";
+    gif.style.marginLeft = "auto";
+    gif.style.marginRight = "auto";
+
+    // append ke bawah hasil
+    hasil.parentNode.insertBefore(gif, hasil.nextSibling);
+        setTimeout(()=>{
+      step = 2;
+      tampilPertanyaan(); // lanjut soal 2
+    }, 1200);
+           // lanjut ke soal 2
+        } 
+else {
+          hasil.textContent = "no,no,no ga bisa harus abang yaa";
+
+          // tampil GIF bulat di bawah jawaban
+          const gif = document.createElement("img");
+          gif.src = "b.gif"; // ganti sesuai GIFmu
+          gif.id = "gifSalah";
+          gif.style.width = "150px";
+          gif.style.height = "150px";
+          gif.style.borderRadius = "50%";
+          gif.style.display = "block";
+          gif.style.margin = "10px auto 0 auto";
+          hasil.parentNode.insertBefore(gif, hasil.nextSibling);
+        }
+      };
+
+      pilihan.appendChild(btn);
+    });
+
+  }
+  else if(step === 2){
+    pertanyaan.textContent = "Kalau sitii lagi sedih siapa yang harus sitii cari? ";
+
+    let opsi = ["teman","abang","tidur","musik"];
+
+    opsi.forEach(teks=>{
+        let btn = document.createElement("button");
+        btn.textContent = teks;
+
+        btn.onclick = ()=>{
+         const existingGif = document.getElementById("gifSalah");
+  if(existingGif) existingGif.remove();
+
+            if(teks === "abang"){
+                hasil.textContent = "nahh gituu dongg hehehe😄";
+            const emojiDiv = document.createElement("div");
+        emojiDiv.id = "gifSalah";
+        emojiDiv.textContent = "🫶";
+        emojiDiv.style.fontSize = "150px";
+        emojiDiv.style.display = "flex";
+        emojiDiv.style.justifyContent = "center";
+        emojiDiv.style.margin = "10px auto 0 auto";
+        hasil.parentNode.insertBefore(emojiDiv, hasil.nextSibling);
+        
+       setTimeout(()=>{
+         const existingGif = document.getElementById("gifSalah");
+  if(existingGif) existingGif.remove();
+
+          pertanyaan.textContent = "";
+          pilihan.innerHTML = "";
+          hasil.textContent = "";
+          
+        spinnerContainer.style.display = 'block';
+
+
+          startSpinner(); 
+        }, 2000); 
+        
+            } else {
+                hasil.textContent = "udahh yaa pilih abang aja biar kita bisa lanjut owkeyy👌 ";
+            }
+        };
+
+        pilihan.appendChild(btn);
+    });
+}
+}
+ 
+function startSpinner(){
+  const spinner = document.getElementById('spinner');
+  const spinBtn = document.getElementById('spinBtn');
+  const spinnerResult = document.getElementById('spinnerResult');
+
+  spinBtn.disabled = false;
+  spinnerResult.textContent = "";
+
+  spinBtn.onclick = ()=>{
+    spinBtn.disabled = true;
+    spinnerResult.textContent = "";
+
+    const hadiahTarget = "Kirim pap & dapet uang jajan dari abang";
+
+    const slices = [
+      {text:"Kirim pap & dapet uang jajan dari abang", start:0, end:72},
+      {text:"Sebulan ga dapet jajan 😅", start:72, end:144},
+      {text:"Dapat snack favorit 🍫", start:144, end:216},
+      {text:"Harus nyanyi 1 lagu 🎤", start:216, end:288},
+      {text:"Kirim foto lucu ke abang 😎", start:288, end:360},
+    ];
+
+    const targetSlice = slices.find(s=>s.text===hadiahTarget);
+    const targetDeg = targetSlice.start + (targetSlice.end-targetSlice.start)/2;
+    const totalRotate = 360*5 + (360 - targetDeg);
+
+    spinner.style.transition = "transform 4s cubic-bezier(0.25,1,0.5,1)";
+    spinner.style.transform = `rotate(${totalRotate}deg)`;
+
+    setTimeout(()=>{
+      spinnerResult.textContent = "🎉 " + hadiahTarget;
+      spinBtn.disabled = false;
+           countdownBtn.style.display = "block";
+     spinner.style.transition = "none";       // reset transition
+    spinner.style.transform = `rotate(${360 - targetDeg}deg)`; // reset posisi untuk putaran berikutnya
+    },4000);
+  };
+}
+
+// contoh integrasi dengan pertanyaan 2:
+// setelah user klik "abang" dan delay GIF 2 detik
+// document.getElementById('spinnerContainer').style.display = 'block';
+// startSpinner();
+
+const countdownBtn = document.getElementById("countdownBtn");
+const countdownContainer = document.getElementById("countdownContainer");
+
+countdownBtn.addEventListener("click", ()=>{
+spinnerResult.textContent = "";
+  spinnerResult.style.display = "none";
+
+  // sembunyikan spinner + tombol spin
+  document.getElementById("spinnerContainer").style.display = "none";
+  countdownBtn.style.display = "none";
+
+  // tampilkan countdown
+  countdownContainer.style.display = "block";
+
+  // target tanggal ulang tahun (26 Juni 2026 jam 00:00)
+  const targetDate = new Date("2026-06-26T00:00:00");
+
+  const timer = setInterval(()=>{
+    const now = new Date();
+    const diff = targetDate - now;
+
+   if(diff <= 0){
+  clearInterval(timer);
+  // sembunyikan kotak countdown
+  document.getElementById("countdownTimer").style.display = "none";
+  // tampilkan ucapan
+  const msg = document.getElementById("birthdayMessage");
+  msg.textContent = "selamat ulang tahun yaa adekk.abang doain smoga sehat selalu dimurahkan rezekinya terus panjang umur doa terbaik abang buat sitii,terus diumur yg baru ini semoga hal-hal yg siti inginkan bisa tercapai terus moga kita selalu sama-sama terus,biar abang bisa kasi jajan hehehe makin cantik juga pastinya ga kerasa dah makin tua aja siap kejenjang lebih serius ni upss🤭.intinya abang mau ucapin selamat ulang tahun sitiii🥳🥳";
+  msg.style.display = "block";
+   msg.style.textAlign = "center";
+  msg.style.color = "white";
+  msg.style.fontSize = "20px";
+  msg.style.fontWeight = "bold";
+  msg.style.maxWidth = "90vw";       // jangan melebihi 90% layar
+  msg.style.wordWrap = "break-word"; // pecah teks panjang otomatis
+  msg.style.lineHeight = "1.4";
+  msg.style.marginTop = "15px";
+  msg.style.padding = "0 15px";      // ruang kiri-kanan
+  return;
+}
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const minutes = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((diff % (1000*60)) / 1000);
+
+    document.getElementById("days").textContent = days.toString().padStart(2,'0');
+    document.getElementById("hours").textContent = hours.toString().padStart(2,'0');
+    document.getElementById("minutes").textContent = minutes.toString().padStart(2,'0');
+    document.getElementById("seconds").textContent = seconds.toString().padStart(2,'0');
+  }, 1000);
+});
+
+</script>
+</body>  
+</html> 
